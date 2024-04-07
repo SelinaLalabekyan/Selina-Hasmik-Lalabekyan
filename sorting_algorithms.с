@@ -1,0 +1,632 @@
+Selection sort:
+
+#include <stdio.h>
+
+void selectionSort(int arr[], int n) {
+    int i, j, minIdx, temp;
+    for (i = 0; i < n - 1; i++) {
+        minIdx = i;
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        temp = arr[i];
+        arr[i] = arr[minIdx];
+        arr[minIdx] = temp;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    selectionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Insertion sort:
+
+#include <stdio.h>
+
+void insertionSort(int arr[], int n) {
+    int i, key, j;
+    for (i = 1; i < n; i++) {
+        key = arr[i];
+        j = i - 1;
+
+        // Move elements of arr[0..i-1] that are greater than key to one position ahead of their current position
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    insertionSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Bubble sort:
+
+#include <stdio.h>
+
+void bubbleSort(int arr[], int n) {
+    int i, j, temp;
+    for (i = 0; i < n-1; i++) {
+        for (j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    bubbleSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+Shaker sort:
+
+#include <stdio.h>
+
+void shakerSort(int arr[], int n) {
+    int left = 0;
+    int right = n - 1;
+    int swapped = 1;
+
+    while (left < right && swapped) {
+        swapped = 0;
+
+        for (int i = left; i < right; i++) {
+            if (arr[i] > arr[i + 1]) {
+                // Swap elements
+                int temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                swapped = 1;
+            }
+        }
+        right--;
+
+        if (!swapped) {
+            break;  // No swaps, array is already sorted
+        }
+
+        for (int i = right; i > left; i--) {
+            if (arr[i] < arr[i - 1]) {
+                // Swap elements
+                int temp = arr[i];
+                arr[i] = arr[i - 1];
+                arr[i - 1] = temp;
+                swapped = 1;
+            }
+        }
+        left++;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    shakerSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Shell sort:
+
+#include <stdio.h>
+
+void shellSort(int arr[], int n) {
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 34, 54, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    shellSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Counting sort:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void countingSort(int arr[], int n, int max) {
+    int count[max + 1];
+    int output[n];
+
+    for (int i = 0; i <= max; i++) {
+        count[i] = 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+    for (int i = 1; i <= max; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int max = 8; // Maximum element in the array
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    countingSort(arr, n, max);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+Radix sort:
+
+#include <stdio.h>
+
+// Function to get the maximum element from an array
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+// Using counting sort as a subroutine to do the radix sorting
+void countingSort(int arr[], int n, int exp) {
+    int output[n];
+    int count[10] = {0};
+
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+// Radix sort function to sort an array using Radix sort algorithm
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+        countingSort(arr, n, exp);
+    }
+}
+
+// Utility function to print an array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Main function to test the Radix Sort algorithm
+int main() {
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    radixSort(arr, n);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+Bucket sort:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node struct for linked list in buckets
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Bucket Sort function
+void bucketSort(int arr[], int n, int num_buckets) {
+    // Create buckets
+    struct Node* buckets[num_buckets];
+    for (int i = 0; i < num_buckets; i++) {
+        buckets[i] = NULL;
+    }
+
+    // Place elements in the buckets
+    for (int i = 0; i < n; i++) {
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = arr[i];
+        newNode->next = NULL;
+
+        int bucket_index = (arr[i] * num_buckets) / (100 + 1);  // Adjust this formula based on your input range
+        if (buckets[bucket_index] == NULL) {
+            buckets[bucket_index] = newNode;
+        } else {
+            struct Node* current = buckets[bucket_index];
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+    }
+
+    // Sort each bucket and merge back
+    int index = 0;
+    for (int i = 0; i < num_buckets; i++) {
+        struct Node* current = buckets[i];
+        while (current != NULL) {
+            arr[index++] = current->data;
+            current = current->next;
+        }
+    }
+
+    // Free memory for buckets
+    for (int i = 0; i < num_buckets; i++) {
+        struct Node* current = buckets[i];
+        while (current != NULL) {
+            struct Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+}
+
+// Utility function to print an array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Main function to test the Bucket Sort algorithm
+int main() {
+    int arr[] = {29, 25, 3, 49, 9, 37, 21, 43};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int num_buckets = 5;  // Number of buckets to use
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    bucketSort(arr, n, num_buckets);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Merge sort:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Merge two sorted subarrays into one sorted array
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    // Create temporary arrays
+    int L[n1], R[n2];
+    
+    // Copy data to temporary arrays L[] and R[]
+    for (int i = 0; i < n1; i++) {
+        L[i] = arr[l + i];
+    }
+    for (int j = 0; j < n2; j++) {
+        R[j] = arr[m + 1 + j];
+    }
+
+    // Merge the temporary arrays back into arr[l..r]
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if there are any
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if there are any
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// Merge Sort function
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+
+        // Merge the sorted halves
+        merge(arr, l, m, r);
+    }
+}
+
+// Utility function to print an array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Main function to test the Merge Sort algorithm
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: \n");
+    printArray(arr, n);
+
+    mergeSort(arr, 0, n - 1);
+
+    printf("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}
+
+
+Quick sort:
+
+#include <stdio.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = (low - 1);
+    
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Unsorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    
+    quickSort(arr, 0, n - 1);
+  
+    printf("\nSorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    
+    return 0;
+}
+
+Heap sort:
+
+#include <stdio.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void maxHeapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        maxHeapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        maxHeapify(arr, n, i);
+
+    for (int i = n - 1; i > 0; i--) {
+        swap(&arr[0], &arr[i]);
+        maxHeapify(arr, i, 0);
+    }
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Unsorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    
+    heapSort(arr, n);
+  
+    printf("\nSorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    
+    return 0;
+}
+
+

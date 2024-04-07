@@ -1,0 +1,516 @@
+
+Stack:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int items[MAX_SIZE];
+    int top;
+} Stack;
+
+void initialize(Stack *stack) {
+    stack->top = -1;
+}
+
+int isFull(Stack *stack) {
+    return stack->top == MAX_SIZE - 1;
+}
+
+int isEmpty(Stack *stack) {
+    return stack->top == -1;
+}
+
+void push(Stack *stack, int value) {
+    if (isFull(stack)) {
+        printf("Stack is full. Cannot push %d\n", value);
+    } else {
+        stack->items[++stack->top] = value;
+        printf("Pushed %d onto the stack\n", value);
+    }
+}
+
+int pop(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty. Cannot pop\n");
+        return -1;
+    } else {
+        int popped = stack->items[stack->top--];
+        printf("Popped %d from the stack\n", popped);
+        return popped;
+    }
+}
+
+int top(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Stack is empty. No top element\n");
+        return -1;
+    } else {
+        return stack->items[stack->top];
+    }
+}
+
+int main() {
+    Stack stack;
+    initialize(&stack);
+
+    push(&stack, 10);
+    push(&stack, 20);
+    push(&stack, 30);
+
+    printf("Top element: %d\n", top(&stack));
+
+    pop(&stack);
+    pop(&stack);
+
+    printf("Top element: %d\n", top(&stack));
+
+    pop(&stack);
+    pop(&stack);
+
+    return 0;
+}
+
+
+Circular Queue:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 5
+
+typedef struct {
+    int items[MAX_SIZE];
+    int front, rear;
+} CircularQueue;
+
+void initialize(CircularQueue *queue) {
+    queue->front = -1;
+    queue->rear = -1;
+}
+
+int isFull(CircularQueue *queue) {
+    return (queue->front == 0 && queue->rear == MAX_SIZE - 1) || (queue->front == queue->rear + 1);
+}
+
+int isEmpty(CircularQueue *queue) {
+    return queue->front == -1;
+}
+
+void enqueue(CircularQueue *queue, int value) {
+    if (isFull(queue)) {
+        printf("Queue is full. Cannot enqueue %d\n", value);
+    } else {
+        if (isEmpty(queue)) {
+            queue->front = 0;
+        }
+        queue->rear = (queue->rear + 1) % MAX_SIZE;
+        queue->items[queue->rear] = value;
+        printf("Enqueued %d into the queue\n", value);
+    }
+}
+
+int dequeue(CircularQueue *queue) {
+    int dequeued = -1;
+    if (isEmpty(queue)) {
+        printf("Queue is empty. Cannot dequeue\n");
+    } else {
+        dequeued = queue->items[queue->front];
+        if (queue->front == queue->rear) {
+            initialize(queue);
+        } else {
+            queue->front = (queue->front + 1) % MAX_SIZE;
+        }
+        printf("Dequeued %d from the queue\n", dequeued);
+    }
+    return dequeued;
+}
+
+int peek(CircularQueue *queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty. No peek element\n");
+        return -1;
+    } else {
+        return queue->items[queue->front];
+    }
+}
+
+int main() {
+    CircularQueue queue;
+    initialize(&queue);
+
+    enqueue(&queue, 10);
+    enqueue(&queue, 20);
+    enqueue(&queue, 30);
+
+    printf("Peek element: %d\n", peek(&queue));
+
+    dequeue(&queue);
+    dequeue(&queue);
+
+    printf("Peek element: %d\n", peek(&queue));
+
+    dequeue(&queue);
+    dequeue(&queue);
+
+    return 0;
+}
+
+
+Binary Max Heap:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int items[MAX_SIZE];
+    int size;
+} MaxHeap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void maxHeapify(MaxHeap *heap, int index) {
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+    int largest = index;
+
+    if (left < heap->size && heap->items[left] > heap->items[largest]) {
+        largest = left;
+    }
+
+    if (right < heap->size && heap->items[right] > heap->items[largest]) {
+        largest = right;
+    }
+
+    if (largest != index) {
+        swap(&heap->items[index], &heap->items[largest]);
+        maxHeapify(heap, largest);
+    }
+}
+
+void buildMaxHeap(MaxHeap *heap) {
+    for (int i = (heap->size - 1) / 2; i >= 0; i--) {
+        maxHeapify(heap, i);
+    }
+}
+
+void insert(MaxHeap *heap, int value) {
+    if (heap->size >= MAX_SIZE) {
+        printf("Heap is full. Cannot insert %d\n", value);
+        return;
+    }
+
+    heap->items[heap->size] = value;
+    int current = heap->size;
+    int parent = (current - 1) / 2;
+
+    while (current > 0 && heap->items[current] > heap->items[parent]) {
+        swap(&heap->items[current], &heap->items[parent]);
+        current = parent;
+        parent = (current - 1) / 2;
+    }
+
+    heap->size++;
+}
+
+int extractMax(MaxHeap *heap) {
+    if (heap->size <= 0) {
+        printf("Heap is empty. Cannot extract maximum\n");
+        return -1;
+    }
+
+    int max = heap->items[0];
+    heap->items[0] = heap->items[heap->size - 1];
+    heap->size--;
+    maxHeapify(heap, 0);
+
+    return max;
+}
+
+int peek(MaxHeap *heap) {
+    if (heap->size <= 0) {
+        printf("Heap is empty. No maximum element\n");
+        return -1;
+    }
+
+    return heap->items[0];
+}
+
+void increaseKey(MaxHeap *heap, int index, int newValue) {
+    if (index >= heap->size || index < 0) {
+        printf("Invalid index\n");
+        return;
+    }
+
+    heap->items[index] = newValue;
+
+    while (index > 0 && heap->items[index] > heap->items[(index - 1) / 2]) {
+        swap(&heap->items[index], &heap->items[(index - 1) / 2]);
+        index = (index - 1) / 2;
+    }
+}
+
+int main() {
+    MaxHeap heap;
+    heap.size = 0;
+
+    insert(&heap, 10);
+    insert(&heap, 20);
+    insert(&heap, 15);
+
+    printf("Peek element: %d\n", peek(&heap));
+
+    increaseKey(&heap, 1, 25);
+
+    printf("Peek element after increasing key: %d\n", peek(&heap));
+
+    printf("Extracted max element: %d\n", extractMax(&heap));
+    
+    return 0;
+}
+
+
+Double Linked list:
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+} DoubleLinkedList;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insert(DoubleLinkedList* list, int data) {
+    Node* newNode = createNode(data);
+
+    if (list->head == NULL) {
+        list->head = newNode;
+        list->tail = newNode;
+    } else {
+        list->tail->next = newNode;
+        newNode->prev = list->tail;
+        list->tail = newNode;
+    }
+}
+
+void delete(DoubleLinkedList* list, int data) {
+    Node* current = list->head;
+
+    while (current != NULL) {
+        if (current->data == data) {
+            if (current == list->head) {
+                list->head = current->next;
+                if (list->head != NULL) {
+                    list->head->prev = NULL;
+                }
+            } else if (current == list->tail) {
+                list->tail = current->prev;
+                list->tail->next = NULL;
+            } else {
+                current->prev->next = current->next;
+                current->next->prev = current->prev;
+            }
+
+            free(current);
+            return;
+        }
+
+        current = current->next;
+    }
+
+    printf("Element %d not found in the list\n", data);
+}
+
+Node* search(DoubleLinkedList* list, int data) {
+    Node* current = list->head;
+
+    while (current != NULL) {
+        if (current->data == data) {
+            return current;
+        }
+
+        current = current->next;
+    }
+
+    return NULL;
+}
+
+int main() {
+    DoubleLinkedList list;
+    list.head = NULL;
+    list.tail = NULL;
+
+    insert(&list, 10);
+    insert(&list, 20);
+    insert(&list, 30);
+
+    Node* searchResult = search(&list, 20);
+    if (searchResult != NULL) {
+        printf("Element 20 found in the list\n");
+    } else {
+        printf("Element 20 not found in the list\n");
+    }
+
+    delete(&list, 20);
+
+    searchResult = search(&list, 20);
+    if (searchResult != NULL) {
+        printf("Element 20 found in the list\n");
+    } else {
+        printf("Element 20 not found in the list\n");
+    }
+
+    return 0;
+}
+
+Binary searchj tree:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+Node* insert(Node* root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    } else if (data > root->data) {
+        root->right = insert(root->right, data);
+    }
+
+    return root;
+}
+
+Node* findMin(Node* node) {
+    Node* current = node;
+
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+
+    return current;
+}
+
+Node* delete(Node* root, int data) {
+    if (root == NULL) {
+        return root;
+    }
+
+    if (data < root->data) {
+        root->left = delete(root->left, data);
+    } else if (data > root->data) {
+        root->right = delete(root->right, data);
+    } else {
+        if (root->left == NULL) {
+            Node* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            Node* temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = delete(root->right, temp->data);
+    }
+
+    return root;
+}
+
+Node* search(Node* root, int data) {
+    if (root == NULL || root->data == data) {
+        return root;
+    }
+
+    if (data < root->data) {
+        return search(root->left, data);
+    } else {
+        return search(root->right, data);
+    }
+}
+
+void inOrderTraversal(Node* root) {
+    if (root != NULL) {
+        inOrderTraversal(root->left);
+        printf("%d ", root->data);
+        inOrderTraversal(root->right);
+    }
+}
+
+int main() {
+    Node* root = NULL;
+
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    printf("In-order traversal of the BST: ");
+    inOrderTraversal(root);
+    printf("\n");
+
+    Node* searchResult = search(root, 40);
+    if (searchResult != NULL) {
+        printf("Element 40 found in the BST\n");
+    } else {
+        printf("Element 40 not found in the BST\n");
+    }
+
+    root = delete(root, 30);
+
+    printf("In-order traversal of the BST after deleting 30: ");
+    inOrderTraversal(root);
+    printf("\n");
+
+    return 0;
+}
+
+
+
+
+
+
+
